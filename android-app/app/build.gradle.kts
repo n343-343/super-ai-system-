@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -32,6 +34,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+    // keep kotlinOptions (AGP exposes this for Kotlin Android plugin)
     kotlinOptions {
         jvmTarget = "17"
     }
@@ -87,4 +90,15 @@ dependencies {
     androidTestImplementation(platform("androidx.compose:compose-bom:2023.08.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+}
+
+// Ensure Kotlin compiler produces JVM 17 bytecode and enable useful compiler flags.
+tasks.withType<KotlinCompile>().configureEach {
+    kotlinOptions {
+        jvmTarget = "17"
+        freeCompilerArgs += listOf(
+            "-Xjsr305=strict",
+            "-Xjvm-default=all"
+        )
+    }
 }
